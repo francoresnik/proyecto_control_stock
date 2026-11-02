@@ -1,10 +1,15 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import mysql.connector
 #importamos las librerias de mysql
 
 conexion = mysql.connector.connect(
     host ="localhost",
     user ="root",
-    password ="admin",
+    password=os.getenv("DB_PASSWORD"),
     database ="control_stock"
 )
 
@@ -21,9 +26,6 @@ def mostrar_productos():
             f"Clase: {producto[3]} | "
             f"Cantidad: {producto[4]}"
         )
-
-
-
 
 def añadir_producto():
     nombre = input("Nombre del producto: ")
@@ -60,7 +62,6 @@ def eliminar_producto():
 
     cursor = conexion.cursor()
     cursor.execute(eliminar,(identificador,))
-    print(cursor.rowcount)
     conexion.commit()
 
     cursor.close()
