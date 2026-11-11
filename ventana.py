@@ -19,9 +19,10 @@ def mostrar_menu():
     pantalla_menu.pack()
 
 def borrar_producto():
-    pantalla_inicio.pack_forget(
-    pantalla_menu.pack()
-    )
+    pantalla_menu.pack_forget()
+    pantalla_eliminar.pack()
+    
+
 
 def volver_menu():
     pantalla_consulta.pack_forget()
@@ -94,6 +95,37 @@ def mostrar_info():
     conexion.añadir_producto(nombre, precio, categoria, cantidad)
 
     resultado.config(text="¡Producto guardado correctamente!")
+
+def eliminar_producto_tk():
+    id_producto = entrada_eliminar.get()
+    
+    if id_producto.strip() == "":
+        messagebox.showwarning(
+            "ATENCION",
+            "debes seleccionar un producto para eliminar"
+        )
+        return
+    
+    try:
+        id_producto = int(id_producto)
+
+    except ValueError:
+        messagebox.showwarning(
+            "Error",
+            "La ID debe ser un número entero"
+        )
+        return
+
+
+    confirmacion = messagebox.askyesno(
+        "confirmar eliminacion?",
+        "estas seguro que quieres eliminar esto?"
+    )
+    if confirmacion:
+
+        conexion.eliminar_producto(id_producto)
+
+        entrada_eliminar.delete(0, tk.END)
 
 def volver_menu(pantalla_actual):
     pantalla_actual.pack_forget()
@@ -175,7 +207,8 @@ texto_ingresar.grid(row=0, column=0, columnspan=2, pady=20)
 #pantalla eliminar productos
 pantalla_eliminar = tk.Frame(ventana, bg="#20252d")
 
-texto_borrar = tk.Label(
+
+texto_eliminar = tk.Label(
     pantalla_eliminar,
     text= "eliminar producto",
     font=("Arial", 12),
@@ -184,7 +217,7 @@ texto_borrar = tk.Label(
     width=22,
     height=2,
 )
-texto_borrar.grid(row=0, column=0, columnspan= 2, pady= 20 )
+texto_eliminar.grid(row=0, column=0, columnspan= 2, pady= 20 )
 
 #-----------------BOTONES-----------------
 
@@ -264,11 +297,18 @@ boton_volver_menu.grid(row=7, column=4, padx=20)
 
 boton_mostrar = tk.Button(
     pantalla_ingresar_productos,
-    text="Mostrar información",
+    text="Ingresas producto",
     command=mostrar_info
 )
 
 boton_mostrar.grid(row=5, column=0, columnspan=2, pady=10)
+
+boton_eliminar = tk.Button(
+    pantalla_eliminar,
+    text="Eliminar",
+    command=eliminar_producto_tk
+)
+boton_eliminar.grid(row=3, column=0, padx=20)
 
 boton_borrar = tk.Button(
     pantalla_menu,
@@ -289,6 +329,18 @@ tk.Button(
     cursor="hand2",
     command=lambda: volver_menu(pantalla_ingresar_productos)
 ).grid(row=7, column=0, columnspan=2)
+
+tk.Button(
+    pantalla_eliminar,
+    text="Volver",
+    cursor="hand2",
+    command=lambda: volver_menu(pantalla_eliminar)
+).grid(row=7, column=0, columnspan=2)
+
+#eliminar producto
+tk.Label(pantalla_eliminar, text= "ID del producto:", bg="#20252d", fg="white").grid(row=1, column=0, pady=10)
+entrada_eliminar = tk.Entry(pantalla_eliminar)
+entrada_eliminar.grid(row=2, column=1)
 
 # Nombre
 tk.Label(pantalla_ingresar_productos, text="Nombre:", bg="#20252d", fg="white").grid(row=1, column=0, pady=10)
