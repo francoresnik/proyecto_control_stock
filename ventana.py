@@ -3,7 +3,7 @@ import conexion
 import tkinter as tk
 from tkinter import ttk
 from dotenv import load_dotenv
-
+from tkinter import messagebox
 
 
 
@@ -18,6 +18,11 @@ def mostrar_menu():
     pantalla_inicio.pack_forget()
     pantalla_menu.pack()
 
+def borrar_producto():
+    pantalla_inicio.pack_forget(
+    pantalla_menu.pack()
+    )
+
 def volver_menu():
     pantalla_consulta.pack_forget()
     pantalla_menu.pack()
@@ -30,6 +35,22 @@ def consultar_producto():
     pantalla_menu.pack_forget()
     pantalla_consulta.pack()
 
+    # Limpiar la tabla
+    for fila in tabla_productos.get_children():
+        tabla_productos.delete(fila)
+
+    # Obtener productos de MySQL
+    productos = conexion.mostrar_productos()
+
+    # Insertar productos en la tabla
+    for producto in productos:
+        tabla_productos.insert(
+            "",
+            "end",
+            iid=str(producto[0]),
+            values=(producto[1], producto[2], producto[4], producto[3])
+        )
+    
 def salir_programa():
     ventana.destroy()
 
@@ -65,13 +86,15 @@ def mostrar_info():
         return
 
     categoria = entrada_categoria.get().strip()
+
     if categoria == "":
-        resultado.config(text= "ERROR: no podes dejar la categoria vacia")
+        resultado.config(text="ERROR: Debe seleccionar una categoría")
         return
 
-    resultado.config(
-        text=f"Nombre: {nombre}\nPrecio: {precio}\nCantidad: {cantidad}\nCategoría: {categoria}"
-)
+    conexion.añadir_producto(nombre, precio, categoria, cantidad)
+
+    resultado.config(text="¡Producto guardado correctamente!")
+
 def volver_menu(pantalla_actual):
     pantalla_actual.pack_forget()
     pantalla_menu.pack()
@@ -149,7 +172,19 @@ texto_ingresar = tk.Label(
 )
 texto_ingresar.grid(row=0, column=0, columnspan=2, pady=20)
 
+#pantalla eliminar productos
+pantalla_eliminar = tk.Frame(ventana, bg="#20252d")
 
+texto_borrar = tk.Label(
+    pantalla_eliminar,
+    text= "eliminar producto",
+    font=("Arial", 12),
+    bg="#20252d",
+    fg="White",
+    width=22,
+    height=2,
+)
+texto_borrar.grid(row=0, column=0, columnspan= 2, pady= 20 )
 
 #-----------------BOTONES-----------------
 
@@ -217,7 +252,7 @@ boton_salir = tk.Button(
     cursor="hand2",
     command= salir_programa
 )
-boton_salir.grid(row=5, column=3, padx=20)
+boton_salir.grid(row=6, column=3, padx=20)
 
 boton_volver_menu = tk.Button(
     pantalla_consulta,
@@ -234,6 +269,19 @@ boton_mostrar = tk.Button(
 )
 
 boton_mostrar.grid(row=5, column=0, columnspan=2, pady=10)
+
+boton_borrar = tk.Button(
+    pantalla_menu,
+    text="Borrar producto",
+    font=("Arial", 12),
+    bg="#2563eb",
+    fg="white",
+    width= 22,
+    height=2,
+    cursor="hand2",
+    command=borrar_producto
+)
+boton_borrar.grid(row=5, column=3, padx= 10)
 
 tk.Button(
     pantalla_ingresar_productos,

@@ -18,44 +18,45 @@ def mostrar_productos():
     cursor.execute("SELECT * FROM productos")
     productos = cursor.fetchall()
 
-    for producto in productos:
-        print(
-            f"ID: {producto[0]} | "
-            f"Producto: {producto[1]} | "
-            f"Precio: {producto[2]} | "
-            f"Clase: {producto[3]} | "
-            f"Cantidad: {producto[4]}"
-        )
+    cursor.close()
 
-def añadir_producto():
-    nombre = input("Nombre del producto: ")
-    precio = float(input("Precio del producto: "))
-    clase = input("Clase del producto: ")
-    cantidad = int(input("Cantidad disponible: "))
+    return productos
 
-    cursor = conexion.cursor() #nuevamente, se crea el objeto que se comunique
-    #con mysql
+def añadir_producto(nombre=None, precio=None, clase=None, cantidad=None):
+
+    if nombre is None:
+        nombre = input("Nombre del producto: ")
+
+    if precio is None:
+        precio = float(input("Precio del producto: "))
+
+    if clase is None:
+        clase = input("Clase del producto: ")
+
+    if cantidad is None:
+        cantidad = int(input("Cantidad disponible: "))
+
+    cursor = conexion.cursor()
 
     consulta = """
     INSERT INTO productos (nombre, precio, clase, cantidad)
     VALUES (%s, %s, %s, %s)
     """
-    #usamos el %s como un indicador de posicion, cuando se haga la consulta
-    #se va a cambiar por los valores que queremos añadir
 
     valores = (nombre, precio, clase, cantidad)
 
     cursor.execute(consulta, valores)
-    conexion.commit() #commit actualiza los valores, hace la conexion
-    #con mysql y los guarda, ya estamos guardando datos
+    conexion.commit()
 
     cursor.close()
     print("Producto añadido correctamente")
 
 
-def eliminar_producto():
-
-    identificador = int(input("Escriba la id del producto a eliminar: "))
+def eliminar_producto(iid=None):
+    if iid is None:
+        identificador = int(input("Escriba la id del producto a eliminar: "))
+    else:
+        identificador = int(iid)
     
     eliminar = """
     DELETE FROM PRODUCTOS WHERE ID = %s"""
