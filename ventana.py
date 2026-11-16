@@ -8,11 +8,21 @@ from tkinter import messagebox
 
 
 ventana = tk.Tk()
+ventana.attributes('-fullscreen',True)
 ventana.title("Sistema de gestión")
 ventana.geometry("800x500")
 ventana.configure(bg="#20252d")
 
 #-----------------FUNCIONES---------------------
+
+def toggle_fullscreen():
+    # Si ya está en fullscreen, lo saca; si no, lo pone
+    estado = ventana.attributes('-fullscreen')
+    ventana.attributes('-fullscreen', not estado)
+
+def pantalla_completa():
+    pantalla_inicio.pack_forget()
+    pantalla_menu.pack()
 
 def mostrar_menu():
     pantalla_inicio.pack_forget()
@@ -221,6 +231,19 @@ texto_eliminar.grid(row=0, column=0, columnspan= 2, pady= 20 )
 
 #-----------------BOTONES-----------------
 
+
+boton_pantalla_completa = tk.Button(
+    pantalla_inicio,
+    text="Pantalla completa",
+    font=("Arial", 12),
+    bg="#2563eb",
+    fg="white",
+    width= 22,
+    height=2,
+    cursor="hand2",
+    command=toggle_fullscreen)
+boton_pantalla_completa.grid(row=2, column=0, padx=20)
+
 boton_ingresar_productos = tk.Button(
     pantalla_menu,
     text="Ingresar Producto",
@@ -365,7 +388,7 @@ tk.Label(pantalla_ingresar_productos, text="Categoría:", bg="#20252d", fg="whit
 
 entrada_categoria = ttk.Combobox(
     pantalla_ingresar_productos,
-    values=["Bebidas", "Alimentos", "Electrónica", "Limpieza"]
+    values=["Bebidas", "carnes", "Electrónica", "Limpieza","bazar","bebidas con alcohol","Harinas",]
 )
 
 entrada_categoria.grid(row=4, column=1)
